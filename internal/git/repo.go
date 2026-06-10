@@ -74,3 +74,14 @@ func CheckRepoStatus() (hasChanges bool, hasPushes bool) {
 
 	return
 }
+
+// get the latest short commit sha
+func LatestShortSHA() string {
+	cmd := exec.Command("git", "rev-parse", "--short", "HEAD")
+	out, err := cmd.Output()
+	if err != nil {
+		return "unknown"
+	}
+	return strings.TrimSpace(string(out))
+}
+
