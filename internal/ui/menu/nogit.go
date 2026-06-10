@@ -47,7 +47,7 @@ func NewNoGit() NoGitModel {
 	}
 
 	l := list.New(items, list.NewDefaultDelegate(), 0, 0)
-	l.Title = "gitty"
+	l.Title = "gitty - v0.1.0 (unstable; not yet released)"
 	l.SetShowStatusBar(false)
 	l.SetFilteringEnabled(false)
 	l.SetShowHelp(true)
