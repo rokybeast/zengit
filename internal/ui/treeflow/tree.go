@@ -8,6 +8,8 @@ import (
 	"sort"
 	"strings"
 
+	"gitty/internal/git"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -18,7 +20,7 @@ var (
 	titleStyle = lipgloss.NewStyle().
 			Bold(true).
 			Foreground(lipgloss.Color("#a78bfa")).
-			PaddingLeft(2)
+			PaddingLeft(4)
 
 	stagedStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#a3be8c")) // nord green
@@ -50,14 +52,20 @@ type treeNode struct {
 }
 
 type Model struct {
-	nodes  []treeNode
-	cursor int
-	width  int
-	height int
+	nodes      []treeNode
+	cursor     int
+	width      int
+	height     int
+	latestSHA  string
+	isAddFiles bool
 }
 
-func New(width, height int) Model {
-	m := Model{width: width, height: height}
+func New(width, height int, isAddFiles bool) Model {
+	m := Model{
+		width:      width,
+		height:     height,
+		isAddFiles: isAddFiles,
+	}
 	m.refresh()
 	return m
 }
@@ -70,6 +78,7 @@ func (m Model) Init() tea.Cmd {
 func (m *Model) refresh() {
 	statuses := getGitStatus()
 	m.nodes = buildTree(".", "", statuses)
+	m.latestSHA = git.LatestShortSHA()
 
 	if m.cursor >= len(m.nodes) {
 		m.cursor = len(m.nodes) - 1
@@ -113,7 +122,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Model) View() string {
 	var view strings.Builder
-	view.WriteString(titleStyle.Render("Add Files (space/a to stage/unstage, enter/esc to go back)") + "\n\n")
+	if m.isAddFiles {
+		view.WriteString(titleStyle.Render("add files (space/a to stage/unstage, enter/esc to go back)") + "\n\n")
+	} else {
+		view.WriteString(titleStyle.Render(fmt.Sprintf("project tree (%s)", m.latestSHA)) + "\n\n")
+	}
 
 	if len(m.nodes) == 0 {
 		return view.String() + "  no files found.\n"
