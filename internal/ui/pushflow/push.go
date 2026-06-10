@@ -90,7 +90,10 @@ func New(width, height int) Model {
 	}
 
 	s := spinner.New()
-	s.Spinner = spinner.Line
+	s.Spinner = spinner.Spinner{
+		Frames: []string{"⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"},
+		FPS:    time.Millisecond * 100,
+	}
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#88c0d0"))
 
 	return Model{
