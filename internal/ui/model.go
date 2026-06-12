@@ -227,9 +227,9 @@ func (m Model) handleGitOption(msg menu.GitChoiceMsg) (tea.Model, tea.Cmd) {
 			repo := git.RepoName()
 			branch := git.CurrentBranch()
 			if hasPushes {
-				m.message = fmt.Sprintf("󰳏 %s/%s is clean, now, just push 'em! great job completing it! (I think..)", repo, branch)
+				m.message = fmt.Sprintf("󰳏 %s/%s is clean, now, just push 'em! great job completing it! i think..", repo, branch)
 			} else {
-				m.message = fmt.Sprintf("󰳏 %s/%s is clean and nothing is Left, done for the day? (I hope not)", repo, branch)
+				m.message = fmt.Sprintf("󰳏 %s/%s is clean and nothing is left, are you done for the day? hope not ;)", repo, branch)
 			}
 			return m, nil
 		}
@@ -246,9 +246,9 @@ func (m Model) handleGitOption(msg menu.GitChoiceMsg) (tea.Model, tea.Cmd) {
 				repo := git.RepoName()
 				branch := git.CurrentBranch()
 				if hasPushes {
-					m.message = fmt.Sprintf("󰳏 %s/%s is clean, now, just push 'em! great job completing it! (I think..)", repo, branch)
+					m.message = fmt.Sprintf("󰳏 %s/%s is clean, now, just push 'em! great job completing it! i think..", repo, branch)
 				} else {
-					m.message = fmt.Sprintf("󰳏 %s/%s is clean and nothing is left, literally nothing, go back to devving ig", repo, branch)
+					m.message = fmt.Sprintf("󰳏 %s/%s is clean and nothing is left, are you done for the day? hope not ;)", repo, branch)
 				}
 				return m, nil
 			}

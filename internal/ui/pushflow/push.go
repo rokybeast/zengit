@@ -75,8 +75,8 @@ var (
 				PaddingLeft(4)
 
 	pushDetailStyle = lipgloss.NewStyle().
-				Foreground(lipgloss.Color("#d8dee9")). // nord snow
-				PaddingLeft(4)
+			Foreground(lipgloss.Color("#d8dee9")). // nord snow
+			PaddingLeft(4)
 
 	pushHintStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#4c566a")). // nord muted gray
@@ -575,6 +575,19 @@ func (m Model) viewDone() string {
 
 	repoName := git.RepoName()
 	branch := git.CurrentBranch()
+
+	hasChanges, hasPushes := git.CheckRepoStatus()
+	if !hasChanges && !hasPushes {
+		messageStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#81a1c1")).Bold(true)
+		messageHintStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#4c566a"))
+		msg := messageStyle.Render(fmt.Sprintf("󰳏 %s/%s is clean and nothing is left, done for the dat? hope not ;)", repoName, branch))
+		hint := messageHintStyle.Render("\n\npress esc/enter/q to go back")
+		return lipgloss.NewStyle().
+			Width(m.width).
+			Height(m.height).
+			Align(lipgloss.Center, lipgloss.Center).
+			Render(msg + hint)
+	}
 
 	var header string
 	var detail string
