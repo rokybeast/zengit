@@ -258,6 +258,19 @@ func (m Model) handleGitOption(msg menu.GitChoiceMsg) (tea.Model, tea.Cmd) {
 		m.treeFlow = treeflow.New(m.width, m.height, msg.Choice == "Add Files")
 		return m, m.treeFlow.Init()
 	case "Push Commits":
+		hasChanges, hasPushes := git.CheckRepoStatus()
+		if !hasPushes {
+			m.prevState = stateGit
+			m.state = stateMessage
+			repo := git.RepoName()
+			branch := git.CurrentBranch()
+			if hasChanges {
+				m.message = fmt.Sprintf("󰳏 %s/%s has uncommitted changes, but no pushes are left! get back to work!", repo, branch)
+			} else {
+				m.message = fmt.Sprintf("󰳏 %s/%s is clean and nothing is left, are you done for the day? hope not ;)", repo, branch)
+			}
+			return m, nil
+		}
 		m.prevState = stateGit
 		m.state = statePush
 		m.pushFlow = pushflow.New(m.width, m.height)
