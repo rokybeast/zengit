@@ -85,3 +85,13 @@ func LatestShortSHA() string {
 	return strings.TrimSpace(string(out))
 }
 
+// check if there are any staged files ready for commit
+func HasStagedFiles() bool {
+	cmd := exec.Command("git", "diff", "--cached", "--name-only")
+	out, err := cmd.Output()
+	if err != nil {
+		return false
+	}
+	return len(strings.TrimSpace(string(out))) > 0
+}
+
