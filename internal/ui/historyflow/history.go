@@ -23,7 +23,7 @@ var (
 			Bold(true)
 
 	graphLineStyle = lipgloss.NewStyle().
-				Foreground(lipgloss.Color("#4c566a")) // nord muted gray
+			Foreground(lipgloss.Color("#4c566a")) // nord muted gray
 
 	msgStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#eceff4")) // nord snow
@@ -45,11 +45,13 @@ var (
 )
 
 type Model struct {
-	rows   []git.GraphRow
-	cursor int // Cursor index into rows (not just commits, since routes are rows too)
-	width  int
-	height int
-	sha    string
+	rows      []git.GraphRow
+	cursor    int
+	width     int
+	height    int
+	sha       string
+	showDiff  bool
+	diffModel DiffModel
 }
 
 func New(width, height int) Model {
@@ -76,6 +78,18 @@ func (m Model) Init() tea.Cmd {
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	// IF we in the diff view, delegate everything there
+	if m.showDiff {
+		switch msg.(type) {
+		case diffBackMsg:
+			m.showDiff = false
+			return m, nil
+		}
+		var cmd tea.Cmd
+		m.diffModel, cmd = m.diffModel.Update(msg)
+		return m, cmd
+	}
+
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
@@ -88,10 +102,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "esc", "q":
 			return m, func() tea.Msg { return BackMsg{} }
+		case "enter":
+			// open diff for selected commit
+			if m.cursor >= 0 && m.cursor < len(m.rows) && !m.rows[m.cursor].IsRoute {
+				commit := m.rows[m.cursor].Commit
+				m.diffModel = newDiffModel(commit.Hash, commit.Message, m.width, m.height)
+				m.showDiff = true
+				return m, nil
+			}
 		case "up", "k":
 			if m.cursor > 0 {
 				m.cursor--
-				// we skip routing rows only *if possible
 				for m.cursor > 0 && m.rows[m.cursor].IsRoute {
 					m.cursor--
 				}
@@ -99,7 +120,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "down", "j":
 			if m.cursor < len(m.rows)-1 {
 				m.cursor++
-				// again, skip routing rows if possible, i LOVE skipping ts
 				for m.cursor < len(m.rows)-1 && m.rows[m.cursor].IsRoute {
 					m.cursor++
 				}
@@ -120,11 +140,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
+	// delegate to diff view
+	if m.showDiff {
+		return m.diffModel.View()
+	}
+
 	var view strings.Builder
 
 	repoName := git.RepoName()
 	branch := git.CurrentBranch()
-	title := titleStyle.Render(fmt.Sprintf("commit graph (%s) (j/k to scroll up/down, enter for details [wip])", m.sha))
+	title := titleStyle.Render(fmt.Sprintf("commit graph (%s) (j/k to scroll, enter for details)", m.sha))
 	view.WriteString("\n" + title + "\n\n")
 
 	header := fmt.Sprintf("  %s  %s",
@@ -166,9 +191,9 @@ func (m Model) View() string {
 
 	if len(m.rows) > maxVisible {
 		pos := fmt.Sprintf(" [%d/%d]", m.cursor+1, len(m.rows))
-		view.WriteString("\n" + hintStyle.Render("esc/q: back | g/G: top/bottom"+pos))
+		view.WriteString("\n" + hintStyle.Render("esc/q: back | g/G: top/bottom | enter: details"+pos))
 	} else {
-		view.WriteString("\n" + hintStyle.Render("esc/q: back"))
+		view.WriteString("\n" + hintStyle.Render("esc/q: back | enter: details"))
 	}
 
 	return view.String()
@@ -178,7 +203,7 @@ func renderRow(row git.GraphRow, selected bool) string {
 	styledGraph := styleGraphChars(row.Prefix)
 
 	if !row.IsRoute {
-		node := nodeStyle.Render("") // nf-md-circle_small
+		node := nodeStyle.Render("") // nf-dev-git-comitt
 		styledGraph = strings.Replace(styledGraph, "*", node, 1)
 	}
 
