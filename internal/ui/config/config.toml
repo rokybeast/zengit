@@ -1,0 +1,11 @@
+[colors]
+# theme
+
+[commit]
+templates = true
+
+[[commit.entries]]
+name = "Type Name"
+description = "Description"
+
+[]
