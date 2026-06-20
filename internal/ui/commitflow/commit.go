@@ -103,6 +103,7 @@ type Model struct {
 	commitErr  string
 	width      int
 	height     int
+	isCustom   bool
 }
 
 // create a fresh commit wizard
@@ -199,9 +200,10 @@ func (m Model) updateChooseType(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 
 		if selected.title == "custom commit message" {
-			// go to custom prefix input
-			m.step = stepCustomPrefix
-			m.input = newTextInput("your custom prefix...")
+			// skip all template stuff and go straight to message input
+			m.isCustom = true
+			m.step = stepMessage
+			m.input = newTextInput("write your full commit message...")
 			return m, m.input.Focus()
 		}
 
@@ -265,7 +267,10 @@ func (m Model) updateMessage(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 		// build the commit string
 		var commitStr string
-		if m.scope != "" {
+		if m.isCustom {
+			// custom commit: use the message as-is
+			commitStr = m.message
+		} else if m.scope != "" {
 			commitStr = fmt.Sprintf("%s(%s): %s", m.commitType, m.scope, m.message)
 		} else {
 			commitStr = fmt.Sprintf("%s: %s", m.commitType, m.message)
@@ -322,6 +327,9 @@ func (m Model) View() string {
 	case stepScope:
 		return m.viewTextInput("write a scope", "> a scope is a way to tell that you have changed a certain part of the code")
 	case stepMessage:
+		if m.isCustom {
+			return m.viewTextInput("write your commit message", "> its your commit, spread your abstractness :D")
+		}
 		return m.viewTextInput("write the commit message", "> make sure it's small, and understandable")
 	case stepDone:
 		return m.viewDone()
