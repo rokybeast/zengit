@@ -35,7 +35,6 @@ func CheckRepoStatus() (hasChanges bool, hasPushes bool) {
 	statusOut, err := statusCmd.Output()
 	if err == nil && len(strings.TrimSpace(string(statusOut))) > 0 {
 		hasChanges = true
-		return
 	}
 
 	// check if branch is ahead of upstream [gitdocs]
