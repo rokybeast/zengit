@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"gitty/internal/git"
+	"gitty/internal/ui/common"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -149,7 +150,7 @@ func (m Model) View() string {
 
 	repoName := git.RepoName()
 	branch := git.CurrentBranch()
-	title := titleStyle.Render(fmt.Sprintf("commit graph (%s) (j/k to scroll, enter for details)", m.sha))
+	title := titleStyle.Render(fmt.Sprintf("commit graph (%s)", m.sha))
 	view.WriteString("\n" + title + "\n\n")
 
 	header := fmt.Sprintf("  %s  %s",
@@ -161,7 +162,11 @@ func (m Model) View() string {
 
 	if len(m.rows) == 0 {
 		view.WriteString(hintStyle.Render("  no commits found.") + "\n")
-		view.WriteString("\n" + hintStyle.Render("press esc/q to go back"))
+		
+		shortcuts := []common.Shortcut{
+			{Key: "esc/q", Desc: "back"},
+		}
+		view.WriteString("\n  " + common.RenderShortcuts(shortcuts) + "\n")
 		return view.String()
 	}
 
@@ -189,12 +194,17 @@ func (m Model) View() string {
 		view.WriteString(rendered + "\n")
 	}
 
-	if len(m.rows) > maxVisible {
-		pos := fmt.Sprintf(" [%d/%d]", m.cursor+1, len(m.rows))
-		view.WriteString("\n" + hintStyle.Render("esc/q: back | g/G: top/bottom | enter: details"+pos))
-	} else {
-		view.WriteString("\n" + hintStyle.Render("esc/q: back | enter: details"))
+	shortcuts := []common.Shortcut{
+		{Key: "esc/q", Desc: "back"},
+		{Key: "enter", Desc: "details"},
 	}
+
+	if len(m.rows) > maxVisible {
+		pos := fmt.Sprintf("[%d/%d]", m.cursor+1, len(m.rows))
+		shortcuts = append(shortcuts, common.Shortcut{Key: "pos", Desc: pos})
+	}
+
+	view.WriteString("\n  " + common.RenderShortcuts(shortcuts) + "\n")
 
 	return view.String()
 }

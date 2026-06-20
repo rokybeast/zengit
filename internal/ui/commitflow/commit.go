@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"gitty/internal/git"
+	"gitty/internal/ui/common"
 
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/textinput"
@@ -343,7 +344,13 @@ func (m Model) viewTextInput(label, hint string) string {
 	hintStr := commitHintStyle.Render(hint)
 	inputStr := lipgloss.NewStyle().PaddingLeft(2).Render(m.input.View())
 
-	return lipgloss.JoinVertical(lipgloss.Left, "", labelStr, hintStr, "", inputStr)
+	shortcuts := []common.Shortcut{
+		{Key: "esc/q", Desc: "back"},
+		{Key: "enter", Desc: "confirm"},
+	}
+	footer := "\n  " + common.RenderShortcuts(shortcuts)
+
+	return lipgloss.JoinVertical(lipgloss.Left, "", labelStr, hintStr, "", inputStr, "", footer)
 }
 
 // render the success/error screen after committing
@@ -351,8 +358,13 @@ func (m Model) viewDone() string {
 	if m.commitErr != "" {
 		errMsg := commitErrorStyle.Render("commit failed!")
 		detail := commitDetailStyle.Render(m.commitErr)
-		hint := commitHintStyle.Render("press esc to go back")
-		return lipgloss.JoinVertical(lipgloss.Left, "", errMsg, "", detail, "", hint)
+		
+		shortcuts := []common.Shortcut{
+			{Key: "esc", Desc: "back"},
+		}
+		footer := "\n  " + common.RenderShortcuts(shortcuts)
+		
+		return lipgloss.JoinVertical(lipgloss.Left, "", errMsg, "", detail, "", footer)
 	}
 
 	repoName := git.RepoName()
@@ -363,19 +375,21 @@ func (m Model) viewDone() string {
 	)
 
 	sha := m.shortSha
-	toggleHint := "press ctrl+o for the longer sha commit id"
 	if m.showLong {
 		sha = m.longSha
-		toggleHint = "press ctrl+o for the short sha commit id"
 	}
 
 	shaLine := commitDetailStyle.Render(
-		fmt.Sprintf("commit id: %s (%s)", sha, toggleHint),
+		fmt.Sprintf("commit id: %s", sha),
 	)
 
-	hint := commitHintStyle.Render("press esc to go back to the menu")
+	shortcuts := []common.Shortcut{
+		{Key: "esc", Desc: "menu"},
+		{Key: "ctrl+o", Desc: "toggle sha length"},
+	}
+	footer := "\n  " + common.RenderShortcuts(shortcuts)
 
-	return lipgloss.JoinVertical(lipgloss.Left, "", header, "", shaLine, "", hint)
+	return lipgloss.JoinVertical(lipgloss.Left, "", header, "", shaLine, "", footer)
 }
 
 // create a styled text input with a placeholder

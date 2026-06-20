@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"gitty/internal/git"
+	"gitty/internal/ui/common"
 
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
@@ -264,7 +265,12 @@ func (m Model) View() string {
 				msgStyle.Render(c.message),
 			))
 		}
-		view.WriteString("\n" + lipgloss.NewStyle().Foreground(lipgloss.Color("#4c566a")).PaddingLeft(4).Render("space: toggle | enter: push / next | esc: back"))
+		shortcuts := []common.Shortcut{
+			{Key: "esc", Desc: "back"},
+			{Key: "space", Desc: "toggle"},
+			{Key: "enter", Desc: "push / next"},
+		}
+		view.WriteString("\n  " + common.RenderShortcuts(shortcuts) + "\n")
 
 	case stepRemotes:
 		if len(m.remotes) > 1 {
@@ -300,7 +306,11 @@ func (m Model) View() string {
 				statusText,
 			))
 		}
-		view.WriteString("\n" + lipgloss.NewStyle().Foreground(lipgloss.Color("#4c566a")).PaddingLeft(4).Render("space/enter: select | esc: back"))
+		shortcuts := []common.Shortcut{
+			{Key: "esc", Desc: "back"},
+			{Key: "space/enter", Desc: "select"},
+		}
+		view.WriteString("\n  " + common.RenderShortcuts(shortcuts) + "\n")
 
 	case stepPushing:
 		view.WriteString("\n")
@@ -569,8 +579,13 @@ func (m Model) viewDone() string {
 	if m.pushErr != "" {
 		errMsg := pushErrorStyle.Render("push failed!")
 		detail := pushDetailStyle.Render(m.pushErr)
-		hint := pushHintStyle.Render("press esc to go back")
-		return lipgloss.JoinVertical(lipgloss.Left, "", errMsg, "", detail, "", hint)
+		
+		shortcuts := []common.Shortcut{
+			{Key: "esc", Desc: "back"},
+		}
+		footer := "\n  " + common.RenderShortcuts(shortcuts)
+		
+		return lipgloss.JoinVertical(lipgloss.Left, "", errMsg, "", detail, "", footer)
 	}
 
 	repoName := git.RepoName()
@@ -579,10 +594,14 @@ func (m Model) viewDone() string {
 	hasChanges, hasPushes := git.CheckRepoStatus()
 	if !hasChanges && !hasPushes {
 		messageStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#81a1c1")).Bold(true)
-		messageHintStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#4c566a"))
 		msg := messageStyle.Render(fmt.Sprintf("󰳏 %s/%s is clean and nothing is left, are you done for the day? hope not ;)", repoName, branch))
-		hint := messageHintStyle.Render("press esc/enter/q to go back")
-		fullText := lipgloss.JoinVertical(lipgloss.Center, msg, "", hint)
+		
+		shortcuts := []common.Shortcut{
+			{Key: "esc/enter/q", Desc: "back"},
+		}
+		footer := common.RenderShortcuts(shortcuts)
+		
+		fullText := lipgloss.JoinVertical(lipgloss.Center, msg, "", footer)
 		return lipgloss.NewStyle().
 			Width(m.width).
 			Height(m.height).
@@ -628,7 +647,10 @@ func (m Model) viewDone() string {
 		)
 	}
 
-	hint := pushHintStyle.Render("press esc to go back to the menu")
+	shortcuts := []common.Shortcut{
+		{Key: "esc", Desc: "menu"},
+	}
+	footer := "\n  " + common.RenderShortcuts(shortcuts)
 
-	return lipgloss.JoinVertical(lipgloss.Left, "", header, "", detail, "", hint)
+	return lipgloss.JoinVertical(lipgloss.Left, "", header, "", detail, "", footer)
 }

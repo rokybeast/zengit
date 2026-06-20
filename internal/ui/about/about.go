@@ -1,6 +1,8 @@
 package about
 
 import (
+	"gitty/internal/ui/common"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -50,7 +52,11 @@ func (m Model) View() string {
 			"version: 0.3.0 alpha\n" + // yes, static version for now..
 			"github repository (want to contribute?): github.com/rokybeast/gitty",
 	)
-	hint := hintStyle.Render("press esc to go back")
 
-	return lipgloss.JoinVertical(lipgloss.Left, title, body, hint)
+	shortcuts := []common.Shortcut{
+		{Key: "esc", Desc: "back"},
+	}
+	footer := "\n" + common.RenderShortcuts(shortcuts)
+
+	return lipgloss.JoinVertical(lipgloss.Left, title, body, footer)
 }

@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"gitty/internal/ui/common"
+
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -159,15 +161,24 @@ func (m DiffModel) View() string {
 		shortHash = shortHash[:7]
 	}
 
-	toggleHint := "o for summarized content"
-	if !m.detailed {
-		toggleHint = "o for detailed content"
-	}
 	title := diffTitleStyle.Render(
-		fmt.Sprintf("commit: '%s' [%s] (j/k to scroll up/down, %s)", m.message, shortHash, toggleHint),
+		fmt.Sprintf("commit: '%s' [%s]", m.message, shortHash),
 	)
 
-	return title + "\n\n" + m.viewport.View()
+	shortcuts := []common.Shortcut{
+		{Key: "esc/q", Desc: "back"},
+		{Key: "j/k", Desc: "scroll"},
+	}
+
+	if m.detailed {
+		shortcuts = append(shortcuts, common.Shortcut{Key: "o", Desc: "summarized view"})
+	} else {
+		shortcuts = append(shortcuts, common.Shortcut{Key: "o", Desc: "detailed view"})
+	}
+
+	footer := "\n  " + common.RenderShortcuts(shortcuts) + "\n"
+
+	return title + "\n\n" + m.viewport.View() + footer
 }
 
 func (m *DiffModel) rebuildContent() {

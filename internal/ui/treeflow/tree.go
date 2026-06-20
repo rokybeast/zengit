@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"gitty/internal/git"
+	"gitty/internal/ui/common"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -138,9 +139,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) View() string {
 	var view strings.Builder
 	if m.isAddFiles {
-		view.WriteString(titleStyle.Render("add files (a: stage/unstage, space: toggle folder, enter/esc: go back)") + "\n\n")
+		view.WriteString(titleStyle.Render("add files") + "\n\n")
 	} else {
-		view.WriteString(titleStyle.Render(fmt.Sprintf("project tree (%s) (space: toggle folder, enter/esc: go back)", m.latestSHA)) + "\n\n")
+		view.WriteString(titleStyle.Render(fmt.Sprintf("project tree (%s)", m.latestSHA)) + "\n\n")
 	}
 
 	if len(m.nodes) == 0 {
@@ -221,6 +222,16 @@ func (m Model) View() string {
 			view.WriteString(prefixPart + iconAndName + shaPart + statusPart + "\n")
 		}
 	}
+
+	shortcuts := []common.Shortcut{
+		{Key: "enter/esc", Desc: "go back"},
+		{Key: "space", Desc: "toggle folder"},
+	}
+	if m.isAddFiles {
+		shortcuts = append(shortcuts, common.Shortcut{Key: "a", Desc: "stage/unstage"})
+	}
+
+	view.WriteString("\n  " + common.RenderShortcuts(shortcuts) + "\n")
 
 	return view.String()
 }
