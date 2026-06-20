@@ -150,7 +150,10 @@ func (m AddFilesModel) View() string {
 
 	if len(m.entries) == 0 {
 		view.WriteString(afHintStyle.Render("  nothing to stage, working tree is clean.") + "\n")
-		view.WriteString("\n" + afHintStyle.Render("esc/q: back"))
+		shortcuts := []common.Shortcut{
+			{Key: "esc/q", Desc: "back"},
+		}
+		view.WriteString("\n  " + common.RenderShortcuts(shortcuts) + "\n")
 		return view.String()
 	}
 

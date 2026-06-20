@@ -6,6 +6,7 @@ import (
 
 	"gitty/internal/git"
 	"gitty/internal/ui/about"
+	"gitty/internal/ui/common"
 	"gitty/internal/ui/commitflow"
 	"gitty/internal/ui/historyflow"
 	"gitty/internal/ui/initflow"
@@ -15,7 +16,6 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"gitty/internal/ui/common"
 )
 
 type state int
@@ -328,8 +328,11 @@ var (
 
 func (m Model) viewMessage() string {
 	msg := messageStyle.Render(m.message)
-	hint := messageHintStyle.Render("press esc/enter/q to go back")
-	fullText := lipgloss.JoinVertical(lipgloss.Center, msg, "", hint)
+	shortcuts := []common.Shortcut{
+		{Key: "esc/enter/q", Desc: "back"},
+	}
+	footer := common.RenderShortcuts(shortcuts)
+	fullText := lipgloss.JoinVertical(lipgloss.Center, msg, "", footer)
 	return lipgloss.NewStyle().
 		Width(m.width).
 		Height(m.height).
