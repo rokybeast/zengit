@@ -70,6 +70,9 @@ type AddFilesModel struct {
 	width        int
 	height       int
 	expandedDirs map[string]bool
+
+	showDiff  bool
+	diffModel AddFilesDiffModel
 }
 
 // make a new addfiles model by scanning git status
@@ -88,6 +91,20 @@ func (m AddFilesModel) Init() tea.Cmd {
 }
 
 func (m AddFilesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	if m.showDiff {
+		switch msg := msg.(type) {
+		case afDiffBackMsg:
+			m.showDiff = false
+			return m, nil
+		case tea.WindowSizeMsg:
+			m.width = msg.Width
+			m.height = msg.Height
+		}
+		var cmd tea.Cmd
+		m.diffModel, cmd = m.diffModel.Update(msg)
+		return m, cmd
+	}
+
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
@@ -137,12 +154,26 @@ func (m AddFilesModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if len(m.entries) > 0 {
 				m.cursor = len(m.entries) - 1
 			}
+		case "enter":
+			if len(m.entries) > 0 && m.cursor < len(m.entries) {
+				entry := m.entries[m.cursor]
+				path := entry.path
+				if entry.isDir {
+					path = entry.dir
+				}
+				m.diffModel = newAddFilesDiffModel(path, entry.isDir, m.width, m.height)
+				m.showDiff = true
+			}
 		}
 	}
 	return m, nil
 }
 
 func (m AddFilesModel) View() string {
+	if m.showDiff {
+		return m.diffModel.View()
+	}
+
 	var view strings.Builder
 
 	title := afTitleStyle.Render("add files")
@@ -262,6 +293,7 @@ func (m AddFilesModel) View() string {
 
 	shortcuts := []common.Shortcut{
 		{Key: "esc/q", Desc: "back"},
+		{Key: "enter", Desc: "view diff"},
 		{Key: "space", Desc: "toggle folder"},
 		{Key: "a", Desc: "toggle file/folder"},
 		{Key: "A", Desc: "stage all"},
