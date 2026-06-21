@@ -42,6 +42,14 @@ var (
 
 	defaultStyle = lipgloss.NewStyle().
 			Foreground(common.ColorSnow) // nord snow
+
+	headerBranchStyle = lipgloss.NewStyle().
+				Foreground(common.ColorGreen).
+				Bold(true)
+
+	nodeStyle = lipgloss.NewStyle().
+			Foreground(common.ColorFrostBlue).
+			Bold(true)
 )
 
 type treeNode struct {
@@ -142,6 +150,14 @@ func (m Model) View() string {
 		view.WriteString(titleStyle.Render("add files") + "\n\n")
 	} else {
 		view.WriteString(titleStyle.Render(fmt.Sprintf("project tree (%s)", m.latestSHA)) + "\n\n")
+
+		repoName := git.RepoName()
+		branch := git.CurrentBranch()
+		header := fmt.Sprintf("  %s  %s",
+			nodeStyle.Render("󰘬"), // nf-md-source_branch
+			headerBranchStyle.Render(fmt.Sprintf("%s/%s", repoName, branch)),
+		)
+		view.WriteString(header + "\n\n")
 	}
 
 	if len(m.nodes) == 0 {
