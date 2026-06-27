@@ -49,7 +49,7 @@ func (m Model) View() string {
 	body := bodyStyle.Render(
 		"  gitry is a feature-rich, aesthetically good looking and mainly, a minimal TUI tool.\n" +
 			"  built with golang, and with 󰋑 for  \n\n" +
-			"  version: 1.0.0\n" + // yes, static version for now..
+			"  version: " + common.Version + "\n" +
 			"  github repository (want to contribute?): github.com/rokybeast/gitry",
 	)
 

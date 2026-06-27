@@ -1,8 +1,6 @@
 package menu
 
 import (
-	"fmt"
-
 	"gitry/internal/git"
 
 	"github.com/charmbracelet/bubbles/list"
@@ -52,7 +50,7 @@ func NewGit(width, height int) GitModel {
 		item{id: IDPush, title: " Push Commits", desc: "push the commits to different remotes"},
 		item{id: IDTree, title: "󰙅 Project Tree", desc: "view and manage tracked files"},
 		item{id: IDHistory, title: "󰋚 Commit History", desc: "browse the commit log with a nice graph"},
-		item{id: IDOtherTools, title: "󱈧 Other Git Tools", desc: "merge, rebase, reset, restore, fetch, pull, status and more..."},
+		item{id: IDOtherTools, title: "󱈧 Other Git Tools", desc: "all the other git tools you need"},
 		item{id: IDAbout, title: "󰋼 About gitry", desc: "info about gitry"},
 		item{id: IDQuit, title: "󰈆 Quit", desc: "exit gitry :("},
 	}
@@ -60,7 +58,7 @@ func NewGit(width, height int) GitModel {
 	branch := git.CurrentBranch()
 	repoName := git.RepoName()
 	l := list.New(items, nordListDelegate(), width, height)
-	l.Title = fmt.Sprintf("gitry - v0.3.0 (unstable; not yet released) [󰘬 %s/%s]", repoName, branch)
+	l.Title = common.GetTitle(repoName, branch)
 	l.SetShowStatusBar(false)
 	l.SetFilteringEnabled(false)
 	l.SetShowHelp(true)

@@ -63,7 +63,7 @@ func NewNoGit() NoGitModel {
 	}
 
 	l := list.New(items, nordListDelegate(), 0, 0)
-	l.Title = "gitry - v0.1.0 (unstable; not yet released)"
+	l.Title = common.GetTitle("", "")
 	l.SetShowStatusBar(false)
 	l.SetFilteringEnabled(false)
 	l.SetShowHelp(true)
