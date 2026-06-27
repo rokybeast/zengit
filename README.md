@@ -2,16 +2,39 @@
 
 a minimal, yet feature rich git tui; built with go and love.
 
-## Arch (AUR Planned)
+# Get it:
 
-To get `gitry`, run this command
+## arch linux
 
+to get `gitry` on Arch Linux, run this command
+
+```bash
+# prebuilt binary
+yay -S gitry
+
+# builds from this repo
+yay -S gitry-git
 ```
-yay -S gitry # do note that this WILL build the binary in your computer
+
+## golang native
+
+to get `gitry` directly from go's binary package, run this command
+
+```bash
+go install github.com/rokybeast/gitry@latest
 ```
+make sure you have the `~/go/bin` in your path!
 
-Required Dependencies:
+## to add
 
-- git
+- nix
+- gentoo (emerge)
+- ... etc.
+
+## required dependencies:
+
+- git (of COURSE-)
 - go
 - go packages (automatically installed when building from package managers): `bubbletea`, `bubble` and `lipgloss`.
+
+---
