@@ -3,12 +3,12 @@ package menu
 import (
 	"fmt"
 
-	"zetagit/internal/git"
+	"gitry/internal/git"
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"zetagit/internal/ui/common"
+	"gitry/internal/ui/common"
 )
 
 type GitChoiceMsg struct {
@@ -53,14 +53,14 @@ func NewGit(width, height int) GitModel {
 		item{id: IDTree, title: "󰙅 Project Tree", desc: "view and manage tracked files"},
 		item{id: IDHistory, title: "󰋚 Commit History", desc: "browse the commit log with a nice graph"},
 		item{id: IDOtherTools, title: "󱈧 Other Git Tools", desc: "merge, rebase, reset, restore, fetch, pull, status and more..."},
-		item{id: IDAbout, title: "󰋼 About zetagit", desc: "info about zetagit"},
-		item{id: IDQuit, title: "󰈆 Quit", desc: "exit zetagit :("},
+		item{id: IDAbout, title: "󰋼 About gitry", desc: "info about gitry"},
+		item{id: IDQuit, title: "󰈆 Quit", desc: "exit gitry :("},
 	}
 
 	branch := git.CurrentBranch()
 	repoName := git.RepoName()
 	l := list.New(items, nordListDelegate(), width, height)
-	l.Title = fmt.Sprintf("zetagit - v0.3.0 (unstable; not yet released) [󰘬 %s/%s]", repoName, branch)
+	l.Title = fmt.Sprintf("gitry - v0.3.0 (unstable; not yet released) [󰘬 %s/%s]", repoName, branch)
 	l.SetShowStatusBar(false)
 	l.SetFilteringEnabled(false)
 	l.SetShowHelp(true)

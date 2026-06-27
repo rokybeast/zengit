@@ -1,4 +1,4 @@
-# Default Zetagit Configuration File
+# Default Gitry Configuration File
 
 [config]
 theme = "nord"  # default theme

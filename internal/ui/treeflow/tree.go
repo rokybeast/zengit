@@ -8,8 +8,8 @@ import (
 	"sort"
 	"strings"
 
-	"zetagit/internal/git"
-	"zetagit/internal/ui/common"
+	"gitry/internal/git"
+	"gitry/internal/ui/common"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"

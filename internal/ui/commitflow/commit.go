@@ -5,9 +5,9 @@ import (
 	"os/exec"
 	"strings"
 
-	"zetagit/internal/git"
-	"zetagit/internal/ui/common"
-	"zetagit/internal/config"
+	"gitry/internal/git"
+	"gitry/internal/ui/common"
+	"gitry/internal/config"
 
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/textinput"

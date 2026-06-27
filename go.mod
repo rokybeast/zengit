@@ -1,4 +1,4 @@
-module zetagit
+module gitry
 
 go 1.26.4
 
