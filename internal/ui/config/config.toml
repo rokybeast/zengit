@@ -1,11 +1,40 @@
-[colors]
-# theme
+# Gitty Configuration File
 
-[commit]
+[config]
+theme = "nord"  # default theme
+
+[themes]
+[themes.nord]
+primary = "#88c0d0"
+primary_light = "#81a1c1"
+text = "#eceff4"
+text_dark = "#d8dee9"
+muted = "#4c566a"
+muted_dark = "#525252"
+success = "#a3be8c"
+error = "#bf616a"
+warning = "#d08770"
+diff_add_bg = "#2e3b32"
+diff_del_bg = "#3b2e2e"
+diff_line_bg = "#3b4252"
+
+[themes.catppuccin_mocha]
+primary = "#89b4fa"
+primary_light = "#b4befe"
+text = "#cdd6f4"
+text_dark = "#bac2de"
+muted = "#6c7086"
+muted_dark = "#585b70"
+success = "#a6e3a1"
+error = "#f38ba8"
+warning = "#fab387"
+diff_add_bg = "#273b33"
+diff_del_bg = "#3f2d35"
+diff_line_bg = "#313244"
+
+[commits]
 templates = true
 
-[[commit.entries]]
-name = "Type Name"
-description = "Description"
-
-[]
+[commits.entries]
+name = "feat"
+description = "feature - when you add something new"
