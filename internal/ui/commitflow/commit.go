@@ -7,6 +7,7 @@ import (
 
 	"gitty/internal/git"
 	"gitty/internal/ui/common"
+	"gitty/internal/ui/config"
 
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/textinput"
@@ -107,17 +108,36 @@ type Model struct {
 	isCustom   bool
 }
 
-// create a fresh commit wizard
 func New(width, height int) Model {
-	items := []list.Item{
-		commitItem{title: "feat", desc: "feature - when you add something new"},
-		commitItem{title: "fix", desc: "fix - its pretty easy to understand, its a fix"},
-		commitItem{title: "refactor", desc: "refactor - if you update your code in a way, that changes its location or even update the format, its a refactor"},
-		commitItem{title: "docs", desc: "documentation - any update to docfiles, such as mdfiles, its a documentation update"},
-		commitItem{title: "chore", desc: "chore - if its a task that is boring, then it is a chore (you hate it)"},
-		commitItem{title: "pkg", desc: "package - which means to update/download/remove packages from lockfiles/config files"},
-		commitItem{title: "custom commit message", desc: "its your commit, spread your abstractness :D"},
+	if !config.AppConfig.Commits.Templates {
+		input := newTextInput("write your full commit message...")
+		input.Focus()
+		return Model{
+			step:     stepMessage,
+			input:    input,
+			width:    width,
+			height:   height,
+			isCustom: true,
+		}
 	}
+
+	var items []list.Item
+	for _, entry := range config.AppConfig.Commits.Entries {
+		items = append(items, commitItem{title: entry.Name, desc: entry.Description})
+	}
+
+	if len(items) == 0 {
+		items = []list.Item{
+			commitItem{title: "feat", desc: "feature - when you add something new"},
+			commitItem{title: "fix", desc: "fix - its pretty easy to understand, its a fix"},
+			commitItem{title: "refactor", desc: "refactor - if you update your code in a way, that changes its location or even update the format, its a refactor"},
+			commitItem{title: "docs", desc: "documentation - any update to docfiles, such as mdfiles, its a documentation update"},
+			commitItem{title: "chore", desc: "chore - if its a task that is boring, then it is a chore (you hate it)"},
+			commitItem{title: "pkg", desc: "package - which means to update/download/remove packages from lockfiles/config files"},
+		}
+	}
+
+	items = append(items, commitItem{title: "custom commit message", desc: "its your commit, spread your abstractness :D"})
 
 	l := list.New(items, nordListDelegate(), width, height)
 	l.Title = "choose a commit type"
