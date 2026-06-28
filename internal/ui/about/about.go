@@ -1,7 +1,7 @@
 package about
 
 import (
-	"zengit/internal/ui/common"
+	"github.com/rokybeast/zengit/internal/ui/common"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"

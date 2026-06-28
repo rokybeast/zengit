@@ -1,4 +1,4 @@
-module zengit
+module github.com/rokybeast/zengit
 
 go 1.26.4
 

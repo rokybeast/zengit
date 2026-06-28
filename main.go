@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"zengit/internal/ui"
+	"github.com/rokybeast/zengit/internal/ui"
 
 	tea "github.com/charmbracelet/bubbletea"
 )

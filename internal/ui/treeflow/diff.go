@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"zengit/internal/config"
-	"zengit/internal/ui/common"
+	"github.com/rokybeast/zengit/internal/config"
+	"github.com/rokybeast/zengit/internal/ui/common"
 
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"

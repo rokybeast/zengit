@@ -5,9 +5,9 @@ import (
 	"os/exec"
 	"strings"
 
-	"zengit/internal/git"
-	"zengit/internal/ui/common"
-	"zengit/internal/config"
+	"github.com/rokybeast/zengit/internal/git"
+	"github.com/rokybeast/zengit/internal/ui/common"
+	"github.com/rokybeast/zengit/internal/config"
 
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/textinput"

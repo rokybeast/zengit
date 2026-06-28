@@ -2,7 +2,7 @@ package common
 
 import (
 	"github.com/charmbracelet/lipgloss"
-	"zengit/internal/config"
+	"github.com/rokybeast/zengit/internal/config"
 )
 
 var (

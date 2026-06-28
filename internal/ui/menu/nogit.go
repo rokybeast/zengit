@@ -4,7 +4,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"zengit/internal/ui/common"
+	"github.com/rokybeast/zengit/internal/ui/common"
 )
 
 // menu entry ids
